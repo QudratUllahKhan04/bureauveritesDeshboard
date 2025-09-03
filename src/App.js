@@ -1,99 +1,303 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
+import React, { useState } from "react";
 import "./App.css";
-import cartimage from './image/images2.png';
-import circle_success from './image/circle_success.png';
 
-const UserDetail = () => {
-  const [data, setData] = useState(null);
-  const { id } = useParams();  // This will grab the 'id' from the URL
-  console.log(id)
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`https://verification-backend.vercel.app/${id}`);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        console.log("✅ Data received:", data);
-        setData(data)
-      } catch (err) {
-        console.error("❌ Failed to fetch data:", err.message);
-      }
-    };
+function Form() {
+  const [formData, setFormData] = useState({
+    userId: "",
+    deliverableId: "",
+    publishedOn: "",
+    qrCodeStatus: "",
+    name: "",
+    id: "",
+    issuedOn: "",
+    validUntil: "",
+    type: "",
+    model: "",
+    company: "",
+    trainingLocation: "",
+    trainer: "",
+  });
+
   
-    fetchData();
-  }, [id]);
-  
-  
-  if (!data) return <div>Loading...</div>;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:5000/api/userdatas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+    alert("✅ Data Saved Successfully!");
+  };
 
   return (
-    <div className="main-container">
-      <div className="header">
-        <div className="fingerprint-wrapper">
-          <img src="/images.jpg" alt="Fingerprint" className="fingerprint" />
-        </div>
-        <div className="header-text">
-          <span className="header-title">Authenticate your document</span>
-          <span className="header-subtext">
-            Thank you for submitting your document for verification.<br />
-            Please find below the answer to your request.
-          </span>
-        </div>
-      </div>
-      <div className="data-card-wrapper-main">
-        <div className="data-card-header">
-          <img src={circle_success} alt="Success" />
-        </div>
-        <div className="data-card-wrapper">
-          <div className="data-card-body">
-            <div className="data-row"><strong>Deliverable Id :</strong><span>{data.deliverableId}</span></div>
-            <div className="data-row"><strong>Published on :</strong><span>{data.publishedOn}</span></div>
-            <div className="data-row"><strong>QR Code Status :</strong><span>{data.qrCodeStatus}</span></div>
-            <div className="data-row"><strong>NAME :</strong><span>{data.name}</span></div>
-            <div className="data-row"><strong>ID :</strong><span>{data.userId}</span></div>
-            <div className="data-row"><strong>ISSUED ON :</strong><span>{data.issuedOn}</span></div>
-            <div className="data-row"><strong>VALID UNTIL :</strong><span>{data.validUntil}</span></div>
-            <div className="data-row"><strong>TYPE :</strong><span>{data.type}</span></div>
-            <div className="data-row"><strong>MODEL :</strong><span>{data.model}</span></div>
-            <div className="data-row"><strong>COMPANY :</strong><span>{data.company}</span></div>
-            <div className="data-row"><strong>TRAINING LOCATION :</strong><span>{data.trainingLocation}</span></div>
-            <div className="data-row"><strong>TRAINER :</strong><span>{data.trainer}</span></div>
-
-            <p className="footer-note">
-              <strong>For any further information on this document, please contact the issuer of the document.</strong>
-            </p>
+    <div className="form-wrapper">
+      <div className="form-decoration">
+        <div className="decoration-content">
+          <h1>Deliverable Management</h1>
+          <p>Submit and manage all your deliverable information in one secure place.</p>
+          <div className="features-list">
+            <div className="feature">
+              <i className="fas fa-shield-alt"></i>
+              <span>Secure Data Storage</span>
+            </div>
+            <div className="feature">
+              <i className="fas fa-bolt"></i>
+              <span>Quick Processing</span>
+            </div>
+            <div className="feature">
+              <i className="fas fa-qrcode"></i>
+              <span>QR Code Integration</span>
+            </div>
           </div>
         </div>
-        <span className="bottom-image">
-          <img src={cartimage} alt="Bureau Veritas" />
-        </span>
       </div>
-      <div className="footer-p">
-        <a
-          href="https://group.bureauveritas.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bv-link"
-        >
-          <p style={{ padding: 10, width: 180,marginBottom:10 }}>
-            <span style={{ display: 'block', fontSize: 11, textAlign: 'center' }}>Visit</span>
-            <b style={{ fontWeight: 'lighter' }}>Bureau Veritas Website</b>
-          </p>
-        </a>
+
+      <div className="form-container">
+        <div className="form-header">
+          <h2>Deliverable Form</h2>
+          <p>Please fill in all the required information</p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="userId">
+                <i className="fas fa-user"></i> User ID *
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="userId"
+                  name="userId"
+                  value={formData.userId}
+                  onChange={handleChange}
+                  placeholder="Enter user ID"
+                  required
+                />
+                <i className="fas fa-user"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="deliverableId">
+                <i className="fas fa-id-card"></i> Deliverable ID
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="deliverableId"
+                  name="deliverableId"
+                  value={formData.deliverableId}
+                  onChange={handleChange}
+                  placeholder="Enter deliverable ID"
+                />
+                <i className="fas fa-id-card"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="publishedOn">
+                <i className="fas fa-calendar"></i> Published On
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="date"
+                  id="publishedOn"
+                  name="publishedOn"
+                  value={formData.publishedOn}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-calendar"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="qrCodeStatus">
+                <i className="fas fa-qrcode"></i> QR Code Status
+              </label>
+              <div className="input-with-icon">
+                <select
+                  id="qrCodeStatus"
+                  name="qrCodeStatus"
+                  value={formData.qrCodeStatus}
+                  onChange={handleChange}
+                >
+                  <option value="">Select status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="pending">Pending</option>
+                </select>
+                <i className="fas fa-qrcode"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="name">
+                <i className="fas fa-signature"></i> Name
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter full name"
+                />
+                <i className="fas fa-signature"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="id">
+                <i className="fas fa-fingerprint"></i> ID
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="id"
+                  name="id"
+                  value={formData.id}
+                  onChange={handleChange}
+                  placeholder="Enter ID number"
+                />
+                <i className="fas fa-fingerprint"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="issuedOn">
+                <i className="fas fa-calendar-check"></i> Issued On
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="date"
+                  id="issuedOn"
+                  name="issuedOn"
+                  value={formData.issuedOn}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-calendar-check"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="validUntil">
+                <i className="fas fa-calendar-times"></i> Valid Until
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="date"
+                  id="validUntil"
+                  name="validUntil"
+                  value={formData.validUntil}
+                  onChange={handleChange}
+                />
+                <i className="fas fa-calendar-times"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="type">
+                <i className="fas fa-tag"></i> Type
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="type"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  placeholder="Enter type"
+                />
+                <i className="fas fa-tag"></i>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="model">
+                <i className="fas fa-cube"></i> Model
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="model"
+                  name="model"
+                  value={formData.model}
+                  onChange={handleChange}
+                  placeholder="Enter model"
+                />
+                <i className="fas fa-cube"></i>
+              </div>
+            </div>
+
+            <div className="form-group full-width">
+              <label htmlFor="company">
+                <i className="fas fa-building"></i> Company
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  placeholder="Enter company name"
+                />
+                <i className="fas fa-building"></i>
+              </div>
+            </div>
+
+            <div className="form-group full-width">
+              <label htmlFor="trainingLocation">
+                <i className="fas fa-map-marker-alt"></i> Training Location
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="trainingLocation"
+                  name="trainingLocation"
+                  value={formData.trainingLocation}
+                  onChange={handleChange}
+                  placeholder="Enter training location"
+                />
+                <i className="fas fa-map-marker-alt"></i>
+              </div>
+            </div>
+
+            <div className="form-group full-width">
+              <label htmlFor="trainer">
+                <i className="fas fa-chalkboard-teacher"></i> Trainer
+              </label>
+              <div className="input-with-icon">
+                <input
+                  type="text"
+                  id="trainer"
+                  name="trainer"
+                  value={formData.trainer}
+                  onChange={handleChange}
+                  placeholder="Enter trainer name"
+                />
+                <i className="fas fa-chalkboard-teacher"></i>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" className="submit-btn">
+            <i className="fas fa-paper-plane"></i> Submit Form
+          </button>
+        </form>
       </div>
     </div>
   );
-};
+}
 
-const App = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/:id" element={<UserDetail />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
+export default Form;

@@ -23,10 +23,11 @@ function Form() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/userdatas", {
+  try {
+    const res = await fetch("https://deshboard-backend-omega.vercel.app/api/userdatas", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -34,8 +35,32 @@ function Form() {
 
     const data = await res.json();
     console.log("Response:", data);
-    alert("✅ Data Saved Successfully!");
-  };
+
+    if (data.success) {
+      alert("✅ Data Saved Successfully!");
+      setFormData({
+        userId: "",
+        deliverableId: "",
+        publishedOn: "",
+        qrCodeStatus: "",
+        name: "",
+        id: "",
+        issuedOn: "",
+        validUntil: "",
+        type: "",
+        model: "",
+        company: "",
+        trainingLocation: "",
+        trainer: "",
+      });
+    } else {
+      alert("❌ Failed to save data");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("⚠️ Error submitting form");
+  }
+};
 
   return (
     <div className="form-wrapper">

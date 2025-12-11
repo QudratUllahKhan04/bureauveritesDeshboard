@@ -156,9 +156,8 @@ const handleSubmit = async (e) => {
                   onChange={handleChange}
                 >
                   <option value="">Select status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="pending">Pending</option>
+                  <option value="active">Validated</option>
+               
                 </select>
                 <i className="fas fa-qrcode"></i>
               </div>
